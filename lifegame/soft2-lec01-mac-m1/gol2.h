@@ -1,3 +1,6 @@
+// 課題1 のためのファイル
+
+
 
 // ↓関数の名前を変えて運用して実験
 void init_cells_2(const int height, const int width, int cell[height][width], FILE* fp) {
@@ -23,8 +26,19 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
 
 // グリッドの描画: 世代情報とグリッドの配列等を受け取り、ファイルポインタに該当する出力にグリッドを描画する
 void print_cells_2(FILE *fp, int gen, const int height, const int width, int cell[height][width]) {
+  // 比率の調査
+  double ratio = 0;
+  for (int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+        if (cell[i][j] == 1) {
+          ratio += 1;
+        }
+      }
+  }
+  ratio /= (height * width);
+  //
   system("clear"); // コンソールのクリア
-  printf("generation = %d\r\n", gen);
+  printf("generation = %d, ratio = %lf\r\n", gen, ratio);
   printf("+");
   for (int i = 0; i < 70; i++) {
     printf("-");
