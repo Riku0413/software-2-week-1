@@ -303,7 +303,6 @@ void update_cells_4(const int height, const int width, int cell[height][width], 
     // とりあえず移動
     // 移動するつもりだったところに誰かいたらstay
     // 移動が終わった後のループで空のマスに誕生
-    // ratio が 0.3 を超えたら 上下片方の色を転換する！！
 
     // 乱数の準備
     srand((unsigned)time(NULL));

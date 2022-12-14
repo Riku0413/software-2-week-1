@@ -37,19 +37,9 @@ int main(int argc, char **argv) {
 
     else{
         init_cells_4(height, width, cell, NULL);
-        // srand((unsigned)time(NULL));
-        // for (int i = 0; i < height; i++) {
-        //     for (int j = 0; j < width; j++) {
-        //           double x = (double)rand() / RAND_MAX;
-        //           if (x > 0.9) {
-        //             cell[i][j] = 1;
-        //           } else {
-        //             cell[i][j] = 0;
-        //           }
-        //     }
-        // }
     }
 
+    // 生誕、死亡、戦争の総数をカウントして記録しておく配列
     int number[3] = {0, 0, 1};
 
     print_cells_4(fp, 0, height, width, cell, number); // 表示する
