@@ -26,7 +26,7 @@ int main(int argc, char **argv) {
     else if (argc == 2) {
         FILE *lgfile;
         if ( (lgfile = fopen(argv[1],"r")) != NULL ) {
-            init_cells_2(height, width, cell, lgfile);
+            init_cells_3(height, width, cell, lgfile);
         }
         else {
             fprintf(stderr,"cannot open file %s\n",argv[1]);
@@ -49,14 +49,14 @@ int main(int argc, char **argv) {
         }
     }
     
-    print_cells_2(fp, 0, height, width, cell); // 表示する
+    print_cells_3(fp, 0, height, width, cell); // 表示する
     sleep(1); // 1秒休止
     fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
     
     /* 世代を進める*/
     for (int gen = 1 ;; gen++) {
-        update_cells_2(height, width, cell); // セルを更新
-        print_cells_2(fp, gen, height, width, cell);  // 表示する
+        update_cells_3(height, width, cell); // セルを更新
+        print_cells_3(fp, gen, height, width, cell);  // 表示する
         sleep(1); //1秒休止する
         fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
 

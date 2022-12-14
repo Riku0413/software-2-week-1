@@ -1,7 +1,6 @@
 // 課題3のためのファイル
 
-// ↓関数の名前を変えて運用して実験
-void init_cells_2(const int height, const int width, int cell[height][width], FILE* fp) {
+void init_cells_3(const int height, const int width, int cell[height][width], FILE* fp) {
   if (fp == NULL) {
     cell[20][30] = 1;
     cell[22][30] = 1;
@@ -34,19 +33,18 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
       }
 
       // 本文の読み込み
-      int line = 0; // 何行目のセルかを指定
-      int raw = 0; // 何列目のセルかを指定
 
       // 一旦全部読み込み
       fscanf(fp, "%[^!]", s);
 
-
       char data[100];
       int p_s = 0;
       int p_data = 0;
+      int line = 0; // 何行目のセルかを指定
+      int raw = 0; // 何列目のセルかを指定
 
       while (1) {
-        if (s[p_s] == '\n') {
+        if (s[p_s] == '\n' | s[p_s] == ' ') {
           p_s++;
           continue;
         }
@@ -55,9 +53,9 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
 
         if (s[p_s] == '$' | s[p_s] == '!') {
           // ここで1行のセル更新
-          int i = 0; // ここ
+          int i = 0;
           char buff[3]; // \0の枠も確保!
-          buff[0] = '0'; buff[1] = '0'; buff[2] = '\0';// デフォルトでは文字の0 -> bobo みたいなみたいな符号にも対応！！
+          buff[0] = '0'; buff[1] = '0'; buff[2] = '\0';// デフォルトでは文字の0 -> bobo みたいな符号にも対応！！
           int rank = 0;
           while (data[i] != '$' && data[i] != '!') { // 1行が終わるまでのループ
             if (data[i] >= '0' && data[i] <= '9') {
@@ -66,16 +64,16 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
             }
             else { // b か o のとき
               buff[rank] = '\0';
-              int num = atoi(buff); // ここのincludeは問題ない
+              int num = atoi(buff);
               if (num == 0) {
                 num = 1;
               }
               for (int k = 0; k < num; k++) {
                 if (data[i] == 'b') {
-                  cell[line][raw] = 0; // ここ
+                  cell[line][raw] = 0;
                 }
                 if (data[i] == 'o') {
-                  cell[line][raw] = 1; // ここ
+                  cell[line][raw] = 1;
                 }
                 raw++;
               }
@@ -84,12 +82,8 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
             }
             i++;
           }
-
           raw = 0;
           line++;
-
-
-
           p_data = 0; // リセット
           if (s[p_s] == '$') {
             p_s++;
@@ -98,20 +92,17 @@ void init_cells_2(const int height, const int width, int cell[height][width], FI
             break;
           }
         }
-
         p_data++;
         p_s++;
-
       }
       p_s = 0;
     }
   }
-  //close the file.
   fclose(fp);
 }
 
 // グリッドの描画: 世代情報とグリッドの配列等を受け取り、ファイルポインタに該当する出力にグリッドを描画する
-void print_cells_2(FILE *fp, int gen, const int height, const int width, int cell[height][width]) {
+void print_cells_3(FILE *fp, int gen, const int height, const int width, int cell[height][width]) {
   // 比率の調査
   double ratio = 0;
   for (int i = 0; i < height; i++) {
@@ -150,7 +141,7 @@ void print_cells_2(FILE *fp, int gen, const int height, const int width, int cel
   printf("+\r\n");
 }
 
-void update_cells_2(const int height, const int width, int cell[height][width]) {
+void update_cells_3(const int height, const int width, int cell[height][width]) {
   int cell_expanded[height + 2][width + 2];
   // 初期配置設定
   for (int i = 0; i < height + 2; i++) {

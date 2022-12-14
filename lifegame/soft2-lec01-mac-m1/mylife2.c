@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
         sleep(1); //1秒休止する
         fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
 
-        if (gen % 100 == 0 && gen < 1000) {
+        if (gen % 100 == 0 && gen < 10000) {
             // ファイル名の調整
             char name[11] = "gen0000.lif";
             char number[10] = "0123456789";
