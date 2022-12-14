@@ -49,15 +49,17 @@ int main(int argc, char **argv) {
         //     }
         // }
     }
-    
-    print_cells_4(fp, 0, height, width, cell); // 表示する
+
+    int number[3] = {0, 0, 1};
+
+    print_cells_4(fp, 0, height, width, cell, number); // 表示する
     sleep(1); // 1秒休止
     fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
     
     /* 世代を進める*/
     for (int gen = 1 ;; gen++) {
-        update_cells_4(height, width, cell); // セルを更新
-        print_cells_4(fp, gen, height, width, cell);  // 表示する
+        update_cells_4(height, width, cell, number); // セルを更新
+        print_cells_4(fp, gen, height, width, cell, number);  // 表示する
         sleep(1); //1秒休止する
         fprintf(fp,"\e[%dA",height+3);//height+3 の分、カーソルを上に戻す(壁2、表示部1)
 

@@ -2,14 +2,19 @@
 
 void init_cells_4(const int height, const int width, int cell[height][width], FILE* fp) {
 
+  // 乱数の準備
+  srand((unsigned)time(NULL));
+  double r1 = (double)rand() / RAND_MAX;
+  double r2 = (double)rand() / RAND_MAX;
+  
   // ランダムな初期化
   if (fp == NULL) {
-    srand((unsigned)time(NULL));
     for (int i = 0; i < height; i++) {
       for (int j = 0; j < width; j++) {
-        double x = (double)rand() / RAND_MAX;
-          if (x > 0.9) {
-            if (i < 20) {
+        r1 = (double)rand() / RAND_MAX;
+        r2 = (double)rand() / RAND_MAX;
+          if (r1 > 0.9) {
+            if (r2 > 0.5) {
               cell[i][j] = 1;
             } else {
               cell[i][j] = 10;
@@ -28,7 +33,8 @@ void init_cells_4(const int height, const int width, int cell[height][width], FI
     if (s[1] == 'L' && s[2] == 'i') { // 十分条件
 
       while (fscanf(fp, "%d %d", &x, &y) != EOF) {
-        if (y < 20) {
+        r1 = (double)rand() / RAND_MAX;
+        if (r1 > 0.5) {
           cell[y][x] = 1; // 上半分は 赤 勢力
         } else {
           cell[y][x] = 10; // 下半分は 青 勢力
@@ -89,7 +95,8 @@ void init_cells_4(const int height, const int width, int cell[height][width], FI
                 //   cell[line][raw] = 0;
                 // }
                 if (data[i] == 'o') {
-                  if (line < 20) {
+                  r1 = (double)rand() / RAND_MAX;
+                  if (r1 > 0.5) {
                     cell[line][raw] = 1; // 赤
                   } else {
                     cell[line][raw] = 10; // 青
@@ -122,7 +129,7 @@ void init_cells_4(const int height, const int width, int cell[height][width], FI
 }
 
 // グリッドの描画: 世代情報とグリッドの配列等を受け取り、ファイルポインタに該当する出力にグリッドを描画する
-void print_cells_4(FILE *fp, int gen, const int height, const int width, int cell[height][width]) {
+void print_cells_4(FILE *fp, int gen, const int height, const int width, int cell[height][width], int number[3]) {
 
   // 残兵数の調査
   int red = 0;
@@ -140,6 +147,10 @@ void print_cells_4(FILE *fp, int gen, const int height, const int width, int cel
 
   system("clear"); // コンソールのクリア
   printf("generation = %d, red = %d, blue = %d\r\n", gen, red, blue);
+  printf("birth = %d, death = %d, war = %d\r\n", number[0], number[1], number[2]);
+  if (red == 0 && blue == 0) {
+    printf("\x1b[31mextinct!\r\n\x1b[0m");
+  }
   printf("+");
   for (int i = 0; i < 70; i++) {
     printf("-");
@@ -167,7 +178,7 @@ void print_cells_4(FILE *fp, int gen, const int height, const int width, int cel
   printf("+\r\n");
 }
 
-void update_cells_4(const int height, const int width, int cell[height][width]) {
+void update_cells_4(const int height, const int width, int cell[height][width], int number[3]) {
   int cell_expanded[height + 2][width + 2];
   // 全てのセルを対等に扱うために盤面をexpand
   for (int i = 0; i < height + 2; i++) {
@@ -244,6 +255,7 @@ void update_cells_4(const int height, const int width, int cell[height][width]) 
           double x = (double)rand() / RAND_MAX; // 0 ~ 1
           if (x < p) {
             cell[i - 1][j - 1] = 0; // 戦死 // 更新するのはcell！！！！！！！！！
+            number[1]++;
           }
         }
         else { // 周囲に敵がいないとき
@@ -327,6 +339,9 @@ void update_cells_4(const int height, const int width, int cell[height][width]) 
       for (int j = 0; j < width; j++) {
         x = (double)rand() / RAND_MAX; // 0 ~ 1
         if (x > 0.95) {
+          if (cell[i][j] != 0) {
+            number[1]++; // 死亡数カウント
+          }
           cell[i][j] = 0;
         }
       }
@@ -351,6 +366,7 @@ void update_cells_4(const int height, const int width, int cell[height][width]) 
           x = (double)rand() / RAND_MAX; // 0 ~ 1
           if (x > 0.9) {
             cell[i - 1][j - 1] = flag;
+            number[0]++; // 誕生数カウント
           }
         }
 
@@ -383,6 +399,7 @@ void update_cells_4(const int height, const int width, int cell[height][width]) 
           }
         }
       }
+      number[2]++;
     }
 
     flag = 100;
