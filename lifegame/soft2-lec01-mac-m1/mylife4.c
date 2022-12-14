@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
                 }
             }
             // データの書き込み
-            FILE *fq = fopen(name, "a+"); // 既存なら追加、未開ならファイルを作成
+            FILE *fq = fopen(name, "w+"); // 既存なら追加、未開ならファイルを作成
             fprintf(fq, "#Life 1.06\n");
             for (int i = 0; i < 40; i++) {
                 for (int j = 0; j < 70; j++) {

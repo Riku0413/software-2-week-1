@@ -219,7 +219,7 @@ void update_cells_4(const int height, const int width, int cell[height][width], 
     flag = 10;
   }
 
-  // 戦争時のムーブ
+  // 戦争時の挙動
   if (flag == 100) {
 
     // 乱数の準備
@@ -232,7 +232,7 @@ void update_cells_4(const int height, const int width, int cell[height][width], 
           continue; // 空き地なら次のマスへ
         }
 
-        // 人が存在するとき
+        // セルが存在するとき
         int count = 0; // 敵の数を数える
         count += cell_expanded[i - 1][j - 1];
         count += cell_expanded[i - 1][j];
@@ -251,10 +251,10 @@ void update_cells_4(const int height, const int width, int cell[height][width], 
         }
 
         if (count > 0) { // 周囲に一人でも敵がいるとき
-          double p = count / 8.0; // 殺される確率    // 型変換？？？？？？？
+          double p = count / 8.0; // 殺される確率
           double x = (double)rand() / RAND_MAX; // 0 ~ 1
           if (x < p) {
-            cell[i - 1][j - 1] = 0; // 戦死 // 更新するのはcell！！！！！！！！！
+            cell[i - 1][j - 1] = 0; // 戦死
             number[1]++;
           }
         }
@@ -298,7 +298,7 @@ void update_cells_4(const int height, const int width, int cell[height][width], 
     }
   }
 
-  // 平穏時代のムーブ
+  // 平穏時代の挙動
   if (flag != 100) {
     // とりあえず移動
     // 移動するつもりだったところに誰かいたらstay
