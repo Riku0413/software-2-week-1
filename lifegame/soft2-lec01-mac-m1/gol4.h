@@ -123,17 +123,6 @@ void init_cells_4(const int height, const int width, int cell[height][width], FI
 
 // グリッドの描画: 世代情報とグリッドの配列等を受け取り、ファイルポインタに該当する出力にグリッドを描画する
 void print_cells_4(FILE *fp, int gen, const int height, const int width, int cell[height][width]) {
-  // 比率の調査
-  // double ratio = 0;
-  // for (int i = 0; i < height; i++) {
-  //     for (int j = 0; j < width; j++) {
-  //       if (cell[i][j] == 1) {
-  //         ratio += 1;
-  //       }
-  //     }
-  // }
-  // ratio /= (height * width);
-  //
 
   // 残兵数の調査
   int red = 0;
@@ -298,66 +287,106 @@ void update_cells_4(const int height, const int width, int cell[height][width]) 
   }
 
   // 平穏時代のムーブ
-  // if (flag != 100) {
-  //   // とりあえず移動
-  //   // 移動するつもりだったところに誰かいたらstay
-  //   // 移動が終わった後のループで空のマスに誕生
-  //   // ratio が 0.3 を超えたら 上下片方の色を転換する！！
+  if (flag != 100) {
+    // とりあえず移動
+    // 移動するつもりだったところに誰かいたらstay
+    // 移動が終わった後のループで空のマスに誕生
+    // ratio が 0.3 を超えたら 上下片方の色を転換する！！
 
-  //   // 乱数の準備
-  //   srand((unsigned)time(NULL));
+    // 乱数の準備
+    srand((unsigned)time(NULL));
+    double x = (double)rand() / RAND_MAX; // 0 ~ 1
+    
+    // 1.移動
+    for (int i = 1; i < height + 1; i++) {
+      for (int j = 1; j < width + 1; j++) {
 
-  //   for (int i = 1; i < height + 1; i++) {
-  //     for (int j = 1; j < width + 1; j++) {
+        if (cell_expanded[i][j] == 0) {
+          continue; // 空き地なら次のマスへ
+        }
 
-  //       if (cell_expanded[i][j] == 0) {
-  //         continue; // 空き地なら次のマスへ
-  //       }
+        int coor[9][2] = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j + 1}};
+        int i_next = i;
+        int j_next = j;
+        x = (double)rand() / RAND_MAX; // 0 ~ 1
+        x *= 9;
+        int y = x; // 0 ~ 8 の整数
+        if (cell[coor[y][0] - 1][coor[y][1] - 1] == 0 && (coor[y][0] > 0 && coor[y][0] < height + 1 && coor[y][1] > 0 && coor[y][1] < width + 1)) {
+          i_next = coor[y][0];
+          j_next = coor[y][1];
+        }
+        // 移動
+        cell[i - 1][j - 1] = 0;
+        cell[i_next - 1][j_next - 1] = cell_expanded[i][j];
 
-  //       int coor[9][2] = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j + 1}};
-  //       int i_next = i;
-  //       int j_next = j;
-  //       double x = (double)rand() / RAND_MAX; // 0 ~ 1
-  //       x *= 9;
-  //       int y = x; // 0 ~ 8 の整数
-  //       if (cell[coor[y][0] - 1][coor[y][1] - 1] == 0 && (coor[y][0] > 0 && coor[y][0] < height + 1 && coor[y][1] > 0 && coor[y][1] < width + 1)) {
-  //         i_next = coor[y][0];
-  //         j_next = coor[y][1];
-  //       }
-  //       // 移動
-  //       cell[i - 1][j - 1] = 0;
-  //       cell[i_next - 1][j_next - 1] = cell_expanded[i][j];
+      }
+    }
 
-  //     }
-  //   }
+    // 2.死亡
+    for (int i = 0; i < height; i++) {
+      for (int j = 0; j < width; j++) {
+        x = (double)rand() / RAND_MAX; // 0 ~ 1
+        if (x > 0.95) {
+          cell[i][j] = 0;
+        }
+      }
+    }
 
-  //   // 誕生
-  //   for (int i = 1; i < height + 1; i++) {
-  //     for (int j = 1; j < width + 1; j++) {
-  //       if (cell[i - 1][j - 1] != 0) {
-  //         continue;
-  //       }
-  //       // 空のセルについて
-  //       int coor[8][2] = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j + 1}};
-  //       int parent = 0;
-  //       for (int a = 0; a < 8; a++) {
-  //         if (cell_expanded[coor[a][0]][coor[a][1]] != 0) { // 移動前の状態で、親が近くにいるか
-  //           parent++;
-  //         }
-  //       }
+    // 3.誕生
+    for (int i = 1; i < height + 1; i++) {
+      for (int j = 1; j < width + 1; j++) {
+        if (cell[i - 1][j - 1] != 0) {
+          continue;
+        }
+        // 空のセルについて
+        int coor[8][2] = {{i - 1, j - 1}, {i - 1, j}, {i - 1, j + 1}, {i, j - 1}, {i, j + 1}, {i + 1, j - 1}, {i + 1, j}, {i + 1, j + 1}};
+        int parent = 0;
+        for (int a = 0; a < 8; a++) {
+          if (cell_expanded[coor[a][0]][coor[a][1]] != 0) { // 移動前の状態で、親が近くにいるか
+            parent++;
+          }
+        }
 
-  //       if (parent >= 2) {
-  //         double z = (double)rand() / RAND_MAX; // 0 ~ 1
-  //         if (z > 0.5) {
-  //           cell[i - 1][j - 1] = flag;
-  //         }
-  //       }
+        if (parent >= 2) {
+          x = (double)rand() / RAND_MAX; // 0 ~ 1
+          if (x > 0.9) {
+            cell[i - 1][j - 1] = flag;
+          }
+        }
 
-  //     }
-  //   }
+      }
+    }
 
-  //   // ここで総数をカウントして、1割？を超えていたらセルの上半分を赤1、下半分を青10に！
+    // ここで総数をカウントして、1割？を超えていたらセルの上半分を赤1、下半分を青10に！
+    double ratio = 0;
+    for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          if (cell[i][j] == 1 | cell[i][j] == 10) {
+            ratio += 1;
+          }
+        }
+    }
+    ratio /= (height * width);
 
-  // }
+    // 戦争勃発ライン
+    x = (double)rand() / RAND_MAX; // 0 ~ 1
+    if (ratio > x) {
+      for (int i = 0; i < height; i++) {
+        for (int j = 0; j < width; j++) {
+          if (cell[i][j] == 1 | cell[i][j] == 10) {
+            x = (double)rand() / RAND_MAX; // 0 ~ 1
+            if (x > 0.5) { // 赤
+              cell[i][j] = 1;
+            } else { // 青
+              cell[i][j] = 10;
+            }
+          }
+        }
+      }
+    }
+
+    flag = 100;
+
+  }
 
 }
